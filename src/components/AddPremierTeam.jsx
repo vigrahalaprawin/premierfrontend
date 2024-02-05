@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import ListPremierTeams from "./ListPremierTeams";
 
 class AddPremierTeam extends Component {
   constructor(props) {
@@ -29,7 +28,7 @@ class AddPremierTeam extends Component {
     })
       .then((response) => {
         console.log("we are in success score");
-        return <ListPremierTeams />;
+        window.location.reload();
       })
       .catch((error) => {
         console.log(error);
