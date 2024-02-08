@@ -65,11 +65,27 @@ class ListPremierTeams extends Component {
                     <button id={premTeam.id} onClick={this.deletePremTeam}>
                       Delete
                     </button>
+
+                    <Link to="/editTeam">
+                      <button
+                        className="m5"
+                        id={premTeam.id}
+                        onClick={this.updatePremTeam}
+                      >
+                        Edit
+                      </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        <div>
+          <Link to="/matchWeek">
+            <label>Adding Match Week Information</label>
+            <button className="btn btn-primary m5 addTeambasic">Add</button>
+          </Link>
         </div>
       </div>
     );
