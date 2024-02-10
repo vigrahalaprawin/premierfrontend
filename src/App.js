@@ -4,8 +4,9 @@ import HeaderComponent from "./components/HeaderComponent";
 import FooterComponent from "./components/FooterComponent";
 import AddPremierTeam from "./components/AddPremierTeam";
 import MatchWeek from "./components/MatchWeekTeam";
+import ListAllMatchWeek from "./components/ListAllMatchWeeks";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import DeletePremTeam from "./components/DeletePremTeam";
+import EditPremierTeam from "./components/EditPremierTeam";
 
 function App() {
   return (
@@ -18,8 +19,9 @@ function App() {
             <Route path="/" element={<ListPremierTeams />}></Route>
             <Route path="/teams" element={<ListPremierTeams />}></Route>
             <Route path="/addTeam" element={<AddPremierTeam />}></Route>
-            <Route path="/editTeam" element={<DeletePremTeam />}></Route>
+            <Route path="/editTeam" element={<EditPremierTeam />}></Route>
             <Route path="/matchWeek" element={<MatchWeek />}></Route>
+            <Route path="/allMatchWeeks" element={<ListAllMatchWeek />}></Route>
           </Routes>
         </div>
         <FooterComponent />
