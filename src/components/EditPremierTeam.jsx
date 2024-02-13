@@ -1,34 +1,49 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
-class AddPremierTeam extends Component {
+//import axios from "axios";
+import PremierService from "../service/PremierService";
+
+class EditPremierTeam extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      teamId: 0,
       teamName: "",
       teamCoach: "",
       teamStadium: "",
+      premTeam: [],
     };
+
+    this.editedTeamSubmit = this.editedTeamSubmit.bind(this);
     this.updateFormData = this.updateFormData.bind(this);
-    this.premTeamSubmit = this.premTeamSubmit.bind(this);
+  }
+  componentDidMount() {
+    const studentId = window.location.href.split("/")[4];
+    PremierService.getOnlyPremTeamById(studentId).then((response) => {
+      this.setState({ premTeam: response.data });
+    });
   }
 
-  premTeamSubmit(event) {
+  editedTeamSubmit(event) {
     const data = {
+      teamId: this.state.premTeam.id,
       teamName: this.state.teamName,
       teamCoach: this.state.teamCoach,
       teamStadium: this.state.teamStadium,
     };
-    fetch("http://localhost:8080/api/addTeam", {
-      method: "POST",
+    this.setState({ premTeam: data });
+    fetch(`http://localhost:8080/api/updateTeam/${data.teamId}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json", // Adjust the Content-Type as needed
       },
       body: JSON.stringify(data), // Include the request body as needed
     })
+      .then((response) => response.json())
       .then((response) => {
-        console.log("we are in success score");
-        //window.location.reload
+        this.setState({ premTeam: response });
+        // window.location.reload();
       })
       .catch((error) => {
         console.log(error);
@@ -36,6 +51,8 @@ class AddPremierTeam extends Component {
       });
   }
   updateFormData(event) {
+    // const { name, value } = event.target;
+
     this.setState({
       [event.target.name]: event.target.value,
     });
@@ -44,16 +61,17 @@ class AddPremierTeam extends Component {
   render() {
     return (
       <div>
-        <h1>Add Premier League Team</h1>
-        <form name="premadd" onSubmit={this.premTeamSubmit}>
+        <h1>Edit Premier League Team New Page </h1>
+        <form name="premadd" onSubmit={this.editedTeamSubmit}>
           <div>
             <label>
               Enter Club Name
               <input
                 name="teamName"
                 onChange={this.updateFormData}
-                value={this.state.teamName}
                 type="text"
+                //value={this.state.premTeam.teamName}
+                defaultValue={this.state.premTeam.teamName}
               />
             </label>
           </div>
@@ -62,9 +80,9 @@ class AddPremierTeam extends Component {
               Enter Club Coach
               <input
                 name="teamCoach"
-                value={this.state.teamCoach}
                 onChange={this.updateFormData}
                 type="text"
+                defaultValue={this.state.premTeam.teamCoach}
               />
             </label>
           </div>
@@ -73,14 +91,18 @@ class AddPremierTeam extends Component {
               Enter Club Stadium
               <input
                 name="teamStadium"
-                value={this.state.teamStadium}
                 onChange={this.updateFormData}
                 type="text"
+                defaultValue={this.state.premTeam.teamStadium}
               />
             </label>
           </div>
-          <Link to="/teams">
-            <button type="button" className="m5" onClick={this.premTeamSubmit}>
+          <Link to="/">
+            <button
+              type="button"
+              className="m5"
+              onClick={this.editedTeamSubmit}
+            >
               Submit
             </button>
           </Link>
@@ -93,4 +115,4 @@ class AddPremierTeam extends Component {
   }
 }
 
-export default AddPremierTeam;
+export default EditPremierTeam;

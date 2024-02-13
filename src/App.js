@@ -19,7 +19,7 @@ function App() {
             <Route path="/" element={<ListPremierTeams />}></Route>
             <Route path="/teams" element={<ListPremierTeams />}></Route>
             <Route path="/addTeam" element={<AddPremierTeam />}></Route>
-            <Route path="/editTeam" element={<EditPremierTeam />}></Route>
+            <Route path="/editTeam/:id" element={<EditPremierTeam />}></Route>
             <Route path="/matchWeek" element={<MatchWeek />}></Route>
             <Route path="/allMatchWeeks" element={<ListAllMatchWeek />}></Route>
           </Routes>
