@@ -8,6 +8,7 @@ class ListPremierTeams extends Component {
     this.state = {
       premTeams: [],
     };
+    this.deletePremTeam = this.deletePremTeam.bind(this);
   }
 
   componentDidMount() {
@@ -15,7 +16,6 @@ class ListPremierTeams extends Component {
       this.setState({ premTeams: response.data });
     });
   }
-
   deletePremTeam(event) {
     const premId = event.target.id;
     fetch(`http://localhost:8080/api/deleteTeam/${premId}`, {
@@ -25,16 +25,15 @@ class ListPremierTeams extends Component {
         "Content-Type": "application/json", // Adjust the Content-Type as needed
       },
     })
+      .then((response) => response.json())
       .then((response) => {
-        // Handle the response
+        this.setState({ premTeams: response });
         console.log("success");
       })
       .catch((error) => {
         console.log(error);
         // Handle any errors
       });
-
-    window.location.reload();
   }
 
   render() {
@@ -66,12 +65,8 @@ class ListPremierTeams extends Component {
                       Delete
                     </button>
 
-                    <Link to="/editTeam">
-                      <button
-                        className="m5"
-                        id={premTeam.id}
-                        onClick={this.updatePremTeam}
-                      >
+                    <Link to={`/editTeam/${premTeam.id}`}>
+                      <button className="m5" id={premTeam.id}>
                         Edit
                       </button>
                     </Link>
@@ -83,8 +78,14 @@ class ListPremierTeams extends Component {
         </div>
         <div>
           <Link to="/matchWeek">
-            <label>Adding Match Week Information</label>
-            <button className="btn btn-primary m5 addTeambasic">Add</button>
+            <button className="btn btn-primary m5 addTeambasic">
+              Add Match Week Results
+            </button>
+          </Link>
+          <Link to="/allMatchWeeks">
+            <button className="btn btn-primary m5 addTeambasic">
+              Match Week HomePage
+            </button>
           </Link>
         </div>
       </div>
