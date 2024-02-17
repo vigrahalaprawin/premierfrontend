@@ -13,6 +13,11 @@ class EditPremierTeam extends Component {
       teamCoach: "",
       teamStadium: "",
       premTeam: [],
+      formData: {
+        teamName: "",
+        teamCoach: "",
+        teamStadium: "",
+      },
     };
 
     this.editedTeamSubmit = this.editedTeamSubmit.bind(this);
@@ -53,15 +58,23 @@ class EditPremierTeam extends Component {
   updateFormData(event) {
     // const { name, value } = event.target;
 
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
+    // this.setState({
+    //   [event.target.name]: event.target.value,
+    // });
+
+    const { name, value } = event.target;
+    this.setState((prevState) => ({
+      formData: {
+        ...prevState.formData,
+        [name]: value,
+      },
+    }));
   }
 
   render() {
     return (
       <div>
-        <h1>Edit Premier League Team New Page </h1>
+        <h1>Edit Premier League Team </h1>
         <form name="premadd" onSubmit={this.editedTeamSubmit}>
           <div>
             <label>
@@ -93,6 +106,7 @@ class EditPremierTeam extends Component {
                 name="teamStadium"
                 onChange={this.updateFormData}
                 type="text"
+                //value={this.state.premTeam.teamCoach}
                 defaultValue={this.state.premTeam.teamStadium}
               />
             </label>

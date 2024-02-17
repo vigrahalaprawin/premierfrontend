@@ -9,6 +9,7 @@ const PREM_MATCHWEEKINFO_URL = "http://localhost:8080/api/allMatchWeek";
 const PREM_MATCHWEEKBYID_URL = "http://localhost:8080/api/MatchWeek";
 const PREM_TEAMBYID_URL = "http://localhost:8080/api/premTeam";
 const PREM_UPDATETEAM_URL = "http://localhost:8080/api/updateTeam";
+const PREM_UPDATEMATCHWEEK_URL = "http://localhost:8080/api/updateMatchWeek";
 
 class PremierService {
   getPremierTeams() {
@@ -40,6 +41,9 @@ class PremierService {
 
   getMatchWeekById() {
     return axios.get(PREM_MATCHWEEKBYID_URL);
+  }
+  updateMatchWeekById(matchId) {
+    return axios.put(`${PREM_UPDATEMATCHWEEK_URL}/${matchId}`);
   }
 
   getOnlyPremTeamById(id) {
