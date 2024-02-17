@@ -7,13 +7,7 @@ class ListAllMatchWeeks extends Component {
     super(props);
     this.state = {
       matchWeeksInfo: [],
-      editableRow: 0,
-      updatedData: {},
-      awayScore: "",
-      awayTeam: "",
-      homeTeam: "",
-      homeScore: "",
-      matchWeek: "",
+      editableRow: null,
     };
     this.deleteMatchWeek = this.deleteMatchWeek.bind(this);
     this.editedMatchWeekInfo = this.editedMatchWeekInfo.bind(this);
@@ -33,7 +27,6 @@ class ListAllMatchWeeks extends Component {
     this.setState({
       editableRow: null,
     });
-    // PremierService.updateMatchWeekById(matchId).put
 
     fetch(`http://localhost:8080/api/MatchWeek/${matchId}`, {
       method: "PUT",
