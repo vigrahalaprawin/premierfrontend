@@ -7,14 +7,68 @@ class ListAllMatchWeeks extends Component {
     super(props);
     this.state = {
       matchWeeksInfo: [],
+      editableRow: 0,
+      updatedData: {},
+      awayScore: "",
+      awayTeam: "",
+      homeTeam: "",
+      homeScore: "",
+      matchWeek: "",
     };
-    // this.premTeamSubmit = this.premTeamSubmit.bind(this);
-    //this.deleteMatchWeek = this.deleteMatchWeek.bind(this);
+    this.deleteMatchWeek = this.deleteMatchWeek.bind(this);
+    this.editedMatchWeekInfo = this.editedMatchWeekInfo.bind(this);
+    this.updateMatchRowItem = this.updateMatchRowItem.bind(this);
+    this.updateFormData = this.updateFormData.bind(this);
   }
-
   componentDidMount() {
     PremierService.getAllMatchWeekInfo().then((response) => {
       this.setState({ matchWeeksInfo: response.data });
+    });
+  }
+
+  updateFormData(matchId) {
+    const matchEdited = this.state.matchWeeksInfo.find(
+      (item) => item.matchId === matchId
+    );
+    this.setState({
+      editableRow: null,
+    });
+    // PremierService.updateMatchWeekById(matchId).put
+
+    fetch(`http://localhost:8080/api/MatchWeek/${matchId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json", // Adjust the Content-Type as needed
+      },
+      body: JSON.stringify(matchEdited), // Include the request body as needed
+    })
+      .then((response) => {
+        console.log("we are in success score");
+        //window.location.reload
+      })
+      .catch((error) => {
+        console.log(error);
+        // Handle any errors
+      });
+  }
+  editedMatchWeekInfo(event, matchId) {
+    if (event.target.textContent !== "Save") {
+      this.setState({
+        editableRow: parseInt(event.target.id),
+      });
+    } else {
+      this.updateFormData(matchId);
+    }
+  }
+
+  updateMatchRowItem(event, matchId) {
+    const matchtoEdit = this.state.matchWeeksInfo.findIndex(
+      (item) => item.matchId === matchId
+    );
+    const updatedmatchInfo = [...this.state.matchWeeksInfo];
+    updatedmatchInfo[matchtoEdit][event.target.name] = event.target.value;
+    this.setState({
+      matchWeeksInfo: updatedmatchInfo,
     });
   }
 
@@ -27,15 +81,16 @@ class ListAllMatchWeeks extends Component {
         "Content-Type": "application/json", // Adjust the Content-Type as needed
       },
     })
+      .then((response) => response.json())
       .then((response) => {
         // Handle the response
+        this.setState({ matchWeeksInfo: response });
         console.log("success");
       })
       .catch((error) => {
         console.log(error);
         // Handle any errors
       });
-    window.location.reload();
   }
 
   render() {
@@ -54,26 +109,100 @@ class ListAllMatchWeeks extends Component {
             </thead>
             <tbody>
               {this.state.matchWeeksInfo.map((match) => (
-                <tr key={match.matchId}>
-                  <td>{match.matchWeek}</td>
-                  <td>{match.homeTeam}</td>
-                  <td>{match.homeScore}</td>
-                  <td>{match.awayTeam}</td>
-                  <td>{match.awayScore}</td>
+                <tr key={match.matchId} id={match.matchId}>
                   <td>
+                    {this.state.editableRow === match.matchId ? (
+                      <input
+                        type="text"
+                        name="matchWeek"
+                        value={match.matchWeek}
+                        onChange={(event) =>
+                          this.updateMatchWeek(event, match.matchId)
+                        }
+                      />
+                    ) : (
+                      match.matchWeek
+                    )}
+                  </td>
+                  <td>
+                    {this.state.editableRow === match.matchId ? (
+                      <input
+                        type="text"
+                        name="homeTeam"
+                        value={match.homeTeam}
+                        //onChange={this.updateMatchWeek}
+                        onChange={(event) =>
+                          this.updateMatchRowItem(event, match.matchId)
+                        }
+                        // onChange={(e) => this.updateMatchWeek(e, match.matchId)}
+                      />
+                    ) : (
+                      match.homeTeam
+                    )}
+                  </td>
+                  <td>
+                    {this.state.editableRow === match.matchId ? (
+                      <input
+                        type="text"
+                        name="homeScore"
+                        value={match.homeScore}
+                        //   onChange={this.updateMatchWeek}
+                        onChange={(event) =>
+                          this.updateMatchRowItem(event, match.matchId)
+                        }
+                        //onChange={(e) => this.updateMatchWeek(e, match.matchId)}
+                      />
+                    ) : (
+                      match.homeScore
+                    )}
+                  </td>
+                  <td>
+                    {this.state.editableRow === match.matchId ? (
+                      <input
+                        type="text"
+                        name="awayTeam"
+                        value={match.awayTeam}
+                        // onChange={this.updateMatchWeek}
+                        onChange={(event) =>
+                          this.updateMatchRowItem(event, match.matchId)
+                        }
+                        //onChange={(e) => this.updateMatchWeek(e, match.matchId)}
+                      />
+                    ) : (
+                      match.awayTeam
+                    )}
+                  </td>
+                  <td>
+                    {this.state.editableRow === match.matchId ? (
+                      <input
+                        type="text"
+                        name="awayScore"
+                        value={match.awayScore}
+                        // onChange={this.updateMatchWeek}
+                        onChange={(event) =>
+                          this.updateMatchRowItem(event, match.matchId)
+                        }
+                        // onChange={(e) => this.updateMatchWeek(e, match.matchId)}
+                      />
+                    ) : (
+                      match.awayScore
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      className="m5"
+                      id={match.matchId}
+                      onClick={(event) =>
+                        this.editedMatchWeekInfo(event, match.matchId)
+                      }
+                    >
+                      {this.state.editableRow === match.matchId
+                        ? "Save"
+                        : "Edit"}
+                    </button>
                     <button id={match.matchId} onClick={this.deleteMatchWeek}>
                       Delete
                     </button>
-
-                    <Link to="/editTeam">
-                      <button
-                        className="m5"
-                        id={match.matchId}
-                        onClick={this.updatePremTeam}
-                      >
-                        Edit Not Implemented
-                      </button>
-                    </Link>
                   </td>
                 </tr>
               ))}
