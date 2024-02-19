@@ -93,22 +93,24 @@ class ListAllMatchWeeks extends Component {
           <table className="table  table-striped table-bordered">
             <thead>
               <tr>
-                <th>Match Week</th>
-                <th>Home Team</th>
-                <th>Home Score </th>
-                <th>Away Team </th>
-                <th>Away Score </th>
+                <th className="text-center">Match Week</th>
+                <th className="text-center">Home Team</th>
+                <th className="text-center">Home Score </th>
+                <th className="text-center">Away Team </th>
+                <th className="text-center">Away Score </th>
+                <th className="text-center"> Options </th>
               </tr>
             </thead>
             <tbody>
               {this.state.matchWeeksInfo.map((match) => (
                 <tr key={match.matchId} id={match.matchId}>
-                  <td>
+                  <td className="text-center m5">
                     {this.state.editableRow === match.matchId ? (
                       <input
                         type="text"
                         name="matchWeek"
                         value={match.matchWeek}
+                        className="w-30"
                         onChange={(event) =>
                           this.updateMatchWeek(event, match.matchId)
                         }
@@ -117,73 +119,67 @@ class ListAllMatchWeeks extends Component {
                       match.matchWeek
                     )}
                   </td>
-                  <td>
+                  <td className="text-center">
                     {this.state.editableRow === match.matchId ? (
                       <input
                         type="text"
                         name="homeTeam"
                         value={match.homeTeam}
-                        //onChange={this.updateMatchWeek}
                         onChange={(event) =>
                           this.updateMatchRowItem(event, match.matchId)
                         }
-                        // onChange={(e) => this.updateMatchWeek(e, match.matchId)}
                       />
                     ) : (
                       match.homeTeam
                     )}
                   </td>
-                  <td>
+                  <td className="text-center">
                     {this.state.editableRow === match.matchId ? (
                       <input
                         type="text"
                         name="homeScore"
+                        className="w-30"
                         value={match.homeScore}
-                        //   onChange={this.updateMatchWeek}
                         onChange={(event) =>
                           this.updateMatchRowItem(event, match.matchId)
                         }
-                        //onChange={(e) => this.updateMatchWeek(e, match.matchId)}
                       />
                     ) : (
                       match.homeScore
                     )}
                   </td>
-                  <td>
+                  <td className="text-center">
                     {this.state.editableRow === match.matchId ? (
                       <input
                         type="text"
                         name="awayTeam"
                         value={match.awayTeam}
-                        // onChange={this.updateMatchWeek}
                         onChange={(event) =>
                           this.updateMatchRowItem(event, match.matchId)
                         }
-                        //onChange={(e) => this.updateMatchWeek(e, match.matchId)}
                       />
                     ) : (
                       match.awayTeam
                     )}
                   </td>
-                  <td>
+                  <td className="text-center">
                     {this.state.editableRow === match.matchId ? (
                       <input
                         type="text"
                         name="awayScore"
+                        className="w-30"
                         value={match.awayScore}
-                        // onChange={this.updateMatchWeek}
                         onChange={(event) =>
                           this.updateMatchRowItem(event, match.matchId)
                         }
-                        // onChange={(e) => this.updateMatchWeek(e, match.matchId)}
                       />
                     ) : (
                       match.awayScore
                     )}
                   </td>
-                  <td>
+                  <td className="text-center">
                     <button
-                      className="m5"
+                      className="m5 btn btn-warning"
                       id={match.matchId}
                       onClick={(event) =>
                         this.editedMatchWeekInfo(event, match.matchId)
@@ -193,7 +189,11 @@ class ListAllMatchWeeks extends Component {
                         ? "Save"
                         : "Edit"}
                     </button>
-                    <button id={match.matchId} onClick={this.deleteMatchWeek}>
+                    <button
+                      className="btn btn-danger"
+                      id={match.matchId}
+                      onClick={this.deleteMatchWeek}
+                    >
                       Delete
                     </button>
                   </td>
@@ -209,7 +209,7 @@ class ListAllMatchWeeks extends Component {
             </button>
           </Link>
           <Link to="/">
-            <button className="m5"> Home Page </button>
+            <button className="m5 btn-primary btn"> Home Page </button>
           </Link>
         </div>
       </div>
