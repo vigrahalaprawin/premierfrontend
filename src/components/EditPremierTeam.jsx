@@ -8,6 +8,9 @@ class EditPremierTeam extends Component {
     super(props);
     this.state = {
       premTeam: [],
+      teamName: "",
+      teamCoach: "",
+      teamStadium: "",
     };
 
     this.editedTeamSubmit = this.editedTeamSubmit.bind(this);
@@ -41,6 +44,7 @@ class EditPremierTeam extends Component {
       });
   }
   updateFormData(event) {
+    event.preventDefault();
     this.setState((prevState) => ({
       premTeam: {
         ...prevState.premTeam,
@@ -53,11 +57,16 @@ class EditPremierTeam extends Component {
     return (
       <div>
         <h1>Edit Premier League Team </h1>
-        <form name="premadd" onSubmit={this.editedTeamSubmit}>
+        <form
+          name="premadd"
+          className="d-flex"
+          onSubmit={this.editedTeamSubmit}
+        >
           <div>
-            <label>
+            <label className="margin-5">
               Enter Club Name
               <input
+                className="mside-5 rounded  border-4"
                 name="teamName"
                 onChange={this.updateFormData}
                 type="text"
@@ -69,6 +78,7 @@ class EditPremierTeam extends Component {
             <label>
               Enter Club Coach
               <input
+                className="mside-5 rounded"
                 name="teamCoach"
                 onChange={this.updateFormData}
                 type="text"
@@ -80,6 +90,7 @@ class EditPremierTeam extends Component {
             <label>
               Enter Club Stadium
               <input
+                className="mside-5 rounded"
                 name="teamStadium"
                 onChange={this.updateFormData}
                 type="text"
@@ -87,22 +98,23 @@ class EditPremierTeam extends Component {
               />
             </label>
           </div>
-          <Link to="/">
-            <button
-              type="button"
-              className="m5"
-              onClick={this.editedTeamSubmit}
-            >
-              Submit
-            </button>
-          </Link>
+          <div>
+            <Link to="/">
+              <button
+                type="button"
+                className="mside-5 btn btn-secondary"
+                onClick={this.editedTeamSubmit}
+              >
+                Submit
+              </button>
+            </Link>
+            <Link to="/">
+              <button type="button" className=" mside-5 btn btn-primary">
+                Back to home Page
+              </button>
+            </Link>
+          </div>
         </form>
-
-        <Link to="/">
-          <button type="button" className="m5">
-            Back to home Page{" "}
-          </button>
-        </Link>
       </div>
     );
   }

@@ -77,7 +77,7 @@ class MatchWeekTeam extends Component {
       <div>
         <h1>Add Premier League Team</h1>
         <form
-          className="d-flex"
+          className="d-flex align-items-center"
           name="premadd"
           onSubmit={this.matchWeekTeamSubmit}
         >
@@ -86,7 +86,7 @@ class MatchWeekTeam extends Component {
               Match Week
               <input
                 name="matchWeek"
-                className="w-30 lb-dist"
+                className="w-30  mside-5 rounded"
                 value={this.state.matchWeek}
                 onChange={this.updateMatchWeekData}
                 type="number"
@@ -98,6 +98,7 @@ class MatchWeekTeam extends Component {
               Home Team
               <select
                 name="homeTeam"
+                className="mside-5 colorblue rounded"
                 value={this.state.homeTeam}
                 onChange={this.updateMatchWeekData}
               >
@@ -116,17 +117,18 @@ class MatchWeekTeam extends Component {
               <input
                 type="number"
                 name="homeScore"
-                className="w-30 lb-dist"
+                className="w-30  mside-5 rounded"
                 value={this.state.homeScore}
                 onChange={this.updateMatchWeekData}
               />
             </label>
           </div>
           <div>
-            <label>
+            <label className="mside-5">
               Away Team
               <select
                 name="awayTeam"
+                className="mside-5 colorblue rounded"
                 value={this.state.awayTeam}
                 onChange={this.updateMatchWeekData}
               >
@@ -140,11 +142,11 @@ class MatchWeekTeam extends Component {
             </label>
           </div>
           <div>
-            <label>
+            <label className="mside-5">
               Away Score
               <input
                 name="awayScore"
-                className="w-30 lb-dist"
+                className="w-30  mside-5 rounded"
                 value={this.state.awayScore}
                 onChange={this.updateMatchWeekData}
                 type="number"
@@ -152,11 +154,17 @@ class MatchWeekTeam extends Component {
             </label>
           </div>
         </form>
-        <button type="button" className="m5" onClick={this.matchWeekTeamSubmit}>
+        <button
+          type="button"
+          className="mside-5 btn btn-secondary"
+          onClick={this.matchWeekTeamSubmit}
+        >
           Submit
         </button>
         <Link to="/">
-          <button className="m5">Back to home Page </button>
+          <button className="mside-5 btn btn-primary">
+            Back to home Page{" "}
+          </button>
         </Link>
         <Link to="/allMatchWeeks">
           <button className="btn btn-primary m5 addTeambasic">

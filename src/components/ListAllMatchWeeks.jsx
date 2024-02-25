@@ -8,16 +8,36 @@ class ListAllMatchWeeks extends Component {
     this.state = {
       matchWeeksInfo: [],
       editableRow: null,
+      stringList: [],
     };
     this.deleteMatchWeek = this.deleteMatchWeek.bind(this);
     this.editedMatchWeekInfo = this.editedMatchWeekInfo.bind(this);
     this.updateMatchRowItem = this.updateMatchRowItem.bind(this);
     this.updateFormData = this.updateFormData.bind(this);
+    this.showTeamDetails = this.showTeamDetails.bind(this);
   }
   componentDidMount() {
     PremierService.getAllMatchWeekInfo().then((response) => {
       this.setState({ matchWeeksInfo: response.data });
     });
+    PremierService.getOnlyPremierTeams().then((response) => {
+      this.setState({ stringList: response.data });
+    });
+  }
+
+  showTeamDetails(event) {
+    const teamName = event.target.value;
+    if (teamName === "") {
+      PremierService.getAllMatchWeekInfo().then((response) => {
+        this.setState({ matchWeeksInfo: response.data });
+      });
+    } else {
+      PremierService.getTeamMatchWeekDetailsByName(teamName).then(
+        (response) => {
+          this.setState({ matchWeeksInfo: response.data });
+        }
+      );
+    }
   }
 
   updateFormData(matchId) {
@@ -90,6 +110,23 @@ class ListAllMatchWeeks extends Component {
     return (
       <div>
         <div className="row m-5">
+          <div>
+            <label>
+              Select Team
+              <select
+                name="selectedTeam"
+                value={this.state.selectedTeam}
+                onChange={this.showTeamDetails}
+              >
+                <option value="">None</option>
+                {this.state.stringList.map((string, index) => (
+                  <option key={index} value={string}>
+                    {string}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           <table className="table  table-striped table-bordered">
             <thead>
               <tr>
