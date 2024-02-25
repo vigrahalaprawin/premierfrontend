@@ -80,7 +80,11 @@ class AddPremierTeam extends Component {
             </label>
           </div>
           <Link to="/teams">
-            <button type="button" className="m5" onClick={this.premTeamSubmit}>
+            <button
+              type="button"
+              className="mside-5 btn btn-seondary"
+              onClick={this.premTeamSubmit}
+            >
               Submit
             </button>
           </Link>

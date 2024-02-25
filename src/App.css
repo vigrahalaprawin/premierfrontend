@@ -73,3 +73,10 @@ d-flex {
 .lb-dist {
   margin: 0 10px;
 }
+.mside-5 {
+  margin: 0 5px 0 5px;
+}
+
+.colorblue {
+  color: blue;
+}
