@@ -12,14 +12,22 @@ class MatchWeekTeam extends Component {
       awayScore: 0,
       matchWeek: 0,
       stringList: [],
+      showMessage: false,
     };
     this.updateMatchWeekData = this.updateMatchWeekData.bind(this);
     this.matchWeekTeamSubmit = this.matchWeekTeamSubmit.bind(this);
+    this.hideMessage = this.hideMessage.bind(this);
   }
 
   componentDidMount() {
     PremierService.getOnlyPremierTeams().then((response) => {
       this.setState({ stringList: response.data });
+    });
+  }
+
+  hideMessage(event) {
+    this.setState({
+      showMessage: false,
     });
   }
 
@@ -33,7 +41,6 @@ class MatchWeekTeam extends Component {
       },
     })
       .then((response) => {
-        // Handle the response
         console.log("success");
       })
       .catch((error) => {
@@ -45,6 +52,7 @@ class MatchWeekTeam extends Component {
   }
 
   matchWeekTeamSubmit(event) {
+    // event.preventDefault();
     const data = {
       homeTeam: this.state.homeTeam,
       awayTeam: this.state.awayTeam,
@@ -60,8 +68,9 @@ class MatchWeekTeam extends Component {
       body: JSON.stringify(data), // Include the request body as needed
     })
       .then((response) => {
-        console.log("we are in success score");
-        window.location.reload();
+        this.setState({
+          showMessage: true,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -154,6 +163,14 @@ class MatchWeekTeam extends Component {
             </label>
           </div>
         </form>
+        <div>
+          {this.state.showMessage && (
+            <div onClick={this.hideMessage} className="text-success">
+              Match Week Details Updated for `{this.state.matchWeek}`
+            </div>
+          )}
+        </div>
+
         <button
           type="button"
           className="mside-5 btn btn-secondary"

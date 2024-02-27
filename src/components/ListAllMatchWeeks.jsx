@@ -127,6 +127,23 @@ class ListAllMatchWeeks extends Component {
               </select>
             </label>
           </div>
+          <div>
+            <label>
+              Select By MatchWeek
+              <select
+                name="selectedMatchWeek"
+                value={this.state.selectedMatchWeek}
+                onChange={this.showTeamDetails}
+              >
+                <option value="">None</option>
+                {this.state.stringList.map((string, index) => (
+                  <option key={index} value={string}>
+                    {string}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           <table className="table  table-striped table-bordered">
             <thead>
               <tr>
