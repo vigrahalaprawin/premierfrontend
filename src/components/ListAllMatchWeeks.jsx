@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PremierService from "../service/PremierService";
 import { Link } from "react-router-dom";
+import MatchWeekService from "../service/MatchWeekService";
 
 class ListAllMatchWeeks extends Component {
   constructor(props) {
@@ -9,30 +10,41 @@ class ListAllMatchWeeks extends Component {
       matchWeeksInfo: [],
       editableRow: null,
       stringList: [],
+      matchWeekIdList: [],
+      selectedMatchWeek: 0,
+      selectedTeam: "None",
     };
     this.deleteMatchWeek = this.deleteMatchWeek.bind(this);
     this.editedMatchWeekInfo = this.editedMatchWeekInfo.bind(this);
     this.updateMatchRowItem = this.updateMatchRowItem.bind(this);
     this.updateFormData = this.updateFormData.bind(this);
     this.showTeamDetails = this.showTeamDetails.bind(this);
+    this.showTeamDetailsById = this.showTeamDetailsById.bind(this);
   }
   componentDidMount() {
-    PremierService.getAllMatchWeekInfo().then((response) => {
+    MatchWeekService.getAllMatchWeekInfo().then((response) => {
       this.setState({ matchWeeksInfo: response.data });
     });
     PremierService.getOnlyPremierTeams().then((response) => {
       this.setState({ stringList: response.data });
     });
+    MatchWeekService.getOnlyMatchIds().then((response) => {
+      this.setState({ matchWeekIdList: response.data });
+    });
   }
 
   showTeamDetails(event) {
     const teamName = event.target.value;
+    this.setState({
+      selectedTeam: event.target.value,
+      selectedMatchWeek: 0,
+    });
     if (teamName === "") {
-      PremierService.getAllMatchWeekInfo().then((response) => {
+      MatchWeekService.getAllMatchWeekInfo().then((response) => {
         this.setState({ matchWeeksInfo: response.data });
       });
-    } else {
-      PremierService.getTeamMatchWeekDetailsByName(teamName).then(
+    } else if (teamName !== "") {
+      MatchWeekService.getTeamMatchWeekDetailsByName(teamName).then(
         (response) => {
           this.setState({ matchWeeksInfo: response.data });
         }
@@ -40,29 +52,37 @@ class ListAllMatchWeeks extends Component {
     }
   }
 
+  showTeamDetailsById(event) {
+    const matchWeek = event.target.value;
+    this.setState({
+      selectedTeam: "None",
+      selectedMatchWeek: event.target.value,
+    });
+    if (matchWeek !== "") {
+      MatchWeekService.getMatchWeekById(matchWeek).then((response) => {
+        this.setState({ matchWeeksInfo: response.data });
+      });
+    } else {
+      MatchWeekService.getAllMatchWeekInfo().then((response) => {
+        this.setState({ matchWeeksInfo: response.data });
+      });
+    }
+  }
+
   updateFormData(matchId) {
     const matchEdited = this.state.matchWeeksInfo.find(
       (item) => item.matchId === matchId
     );
+
     this.setState({
       editableRow: null,
     });
 
-    fetch(`http://localhost:8080/api/MatchWeek/${matchId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json", // Adjust the Content-Type as needed
-      },
-      body: JSON.stringify(matchEdited), // Include the request body as needed
-    })
+    MatchWeekService.updatingMatchWeekData(matchId, matchEdited)
       .then((response) => {
         console.log("we are in success score");
-        //window.location.reload
       })
-      .catch((error) => {
-        console.log(error);
-        // Handle any errors
-      });
+      .catch((error) => console.log("error while updating"));
   }
   editedMatchWeekInfo(event, matchId) {
     if (event.target.textContent !== "Save") {
@@ -87,22 +107,13 @@ class ListAllMatchWeeks extends Component {
 
   deleteMatchWeek(event) {
     const matchId = event.target.id;
-    fetch(`http://localhost:8080/api/MatchWeek/${matchId}`, {
-      //Sending the parameter in url
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json", // Adjust the Content-Type as needed
-      },
-    })
-      .then((response) => response.json())
+    console.log(matchId);
+    MatchWeekService.deletingMatchWeekById(matchId)
       .then((response) => {
-        // Handle the response
-        this.setState({ matchWeeksInfo: response });
-        console.log("success");
+        this.setState({ matchWeeksInfo: response.data });
       })
       .catch((error) => {
-        console.log(error);
-        // Handle any errors
+        console.log("error deleting the record");
       });
   }
 
@@ -110,22 +121,48 @@ class ListAllMatchWeeks extends Component {
     return (
       <div>
         <div className="row m-5">
-          <div>
-            <label>
-              Select Team
-              <select
-                name="selectedTeam"
-                value={this.state.selectedTeam}
-                onChange={this.showTeamDetails}
-              >
-                <option value="">None</option>
-                {this.state.stringList.map((string, index) => (
-                  <option key={index} value={string}>
-                    {string}
+          <div className="d-flex justify-content-start">
+            <div className="m5">
+              <label>
+                Select Team
+                <select
+                  name="selectedTeam"
+                  value={this.state.selectedTeam}
+                  onChange={this.showTeamDetails}
+                >
+                  <option value="" className="font-weight-bold">
+                    None
                   </option>
-                ))}
-              </select>
-            </label>
+                  {this.state.stringList.map((string, index) => (
+                    <option key={index} value={string}>
+                      {string}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div>
+              <p className="font-weight-bold m5"> OR </p>
+            </div>
+
+            <div>
+              <label>
+                Select By MatchWeek
+                <select
+                  name="matchWeekId"
+                  className="m5"
+                  value={this.state.selectedMatchWeek}
+                  onChange={this.showTeamDetailsById}
+                >
+                  <option value="">0</option>
+                  {this.state.matchWeekIdList.map((number, index) => (
+                    <option key={index} value={number}>
+                      {number}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
           </div>
           <table className="table  table-striped table-bordered">
             <thead>
@@ -135,6 +172,7 @@ class ListAllMatchWeeks extends Component {
                 <th className="text-center">Home Score </th>
                 <th className="text-center">Away Team </th>
                 <th className="text-center">Away Score </th>
+                <th className="text-center"> Result </th>
                 <th className="text-center"> Options </th>
               </tr>
             </thead>
@@ -149,7 +187,7 @@ class ListAllMatchWeeks extends Component {
                         value={match.matchWeek}
                         className="w-30"
                         onChange={(event) =>
-                          this.updateMatchWeek(event, match.matchId)
+                          this.updateMatchRowItem(event, match.matchId)
                         }
                       />
                     ) : (
@@ -215,6 +253,17 @@ class ListAllMatchWeeks extends Component {
                     )}
                   </td>
                   <td className="text-center">
+                    {match.homeScore > match.awayScore ? (
+                      <button className="m5 btn btn-success" id={match.matchId}>
+                        W
+                      </button>
+                    ) : (
+                      <button className="m5 btn btn-danger" id={match.matchId}>
+                        L
+                      </button>
+                    )}
+                  </td>
+                  <td className="text-center">
                     <button
                       className="m5 btn btn-warning"
                       id={match.matchId}
@@ -227,7 +276,7 @@ class ListAllMatchWeeks extends Component {
                         : "Edit"}
                     </button>
                     <button
-                      className="btn btn-danger"
+                      className="btn btn-secondary"
                       id={match.matchId}
                       onClick={this.deleteMatchWeek}
                     >

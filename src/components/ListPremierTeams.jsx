@@ -18,34 +18,41 @@ class ListPremierTeams extends Component {
   }
   deletePremTeam(event) {
     const premId = event.target.id;
-    fetch(`http://localhost:8080/api/deleteTeam/${premId}`, {
-      //Sending the parameter in url
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json", // Adjust the Content-Type as needed
-      },
-    })
-      .then((response) => response.json())
+    PremierService.deletePremierTeam(premId)
       .then((response) => {
-        this.setState({ premTeams: response });
-        console.log("success");
+        this.setState({
+          premTeams: response.data,
+        });
+        console.log("Team deleted successfully");
       })
-      .catch((error) => {
-        console.log(error);
-        // Handle any errors
-      });
+      .catch((error) => console.log("error while deleting the premier team"));
   }
 
   render() {
     return (
       <div>
         <h2 className="text-center">Premier League Teams</h2>
-        <Link to="/addTeam">
-          <button className="btn btn-primary m5 addTeambasic">Add Team</button>
-        </Link>
+
+        <div>
+          <Link to="/addTeam">
+            <button className="btn btn-primary m5 addTeambasic">
+              Add Team
+            </button>
+          </Link>
+          <Link to="/matchWeek">
+            <button className="btn btn-primary m5 addTeambasic">
+              Add Match Week Results
+            </button>
+          </Link>
+          <Link to="/allMatchWeeks">
+            <button className="btn btn-primary m5 addTeambasic">
+              Match Week HomePage
+            </button>
+          </Link>
+        </div>
 
         <div className="row">
-          <table className="table  table-striped table-bordered">
+          <table className="table  table-striped table-bordered text-center">
             <thead>
               <tr>
                 <th>Club Name</th>
@@ -61,12 +68,15 @@ class ListPremierTeams extends Component {
                   <td>{premTeam.teamCoach}</td>
                   <td>{premTeam.teamStadium}</td>
                   <td>
-                    <button id={premTeam.id} onClick={this.deletePremTeam}>
+                    <button
+                      className="btn btn-danger"
+                      id={premTeam.id}
+                      onClick={this.deletePremTeam}
+                    >
                       Delete
                     </button>
-
                     <Link to={`/editTeam/${premTeam.id}`}>
-                      <button className="m5" id={premTeam.id}>
+                      <button className="m5 btn btn-secondary" id={premTeam.id}>
                         Edit
                       </button>
                     </Link>
@@ -75,18 +85,6 @@ class ListPremierTeams extends Component {
               ))}
             </tbody>
           </table>
-        </div>
-        <div>
-          <Link to="/matchWeek">
-            <button className="btn btn-primary m5 addTeambasic">
-              Add Match Week Results
-            </button>
-          </Link>
-          <Link to="/allMatchWeeks">
-            <button className="btn btn-primary m5 addTeambasic">
-              Match Week HomePage
-            </button>
-          </Link>
         </div>
       </div>
     );
