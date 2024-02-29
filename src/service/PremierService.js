@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const PREM_BASE_URL = "http://localhost:8080/api/teams";
-const PREM_ADDTEAM_URL = "http://localhost:8080/api/addteams";
+const PREM_ADDTEAM_URL = "http://localhost:8080/api/addTeam";
 const PREM_DELETE_URL = "http://localhost:8080/api/deleteTeam";
 const PREM_LEAGUETEAMS_URL = "http://localhost:8080/api/premierTeams";
 const PREM_TEAMBYID_URL = "http://localhost:8080/api/premTeam";
@@ -12,9 +12,9 @@ class PremierService {
     return axios.get(PREM_BASE_URL);
   }
 
-  addPremierTeam() {
+  addPremierTeam(teamData) {
     //adding the prem team
-    return axios.post(PREM_ADDTEAM_URL);
+    return axios.post(PREM_ADDTEAM_URL, teamData);
   }
 
   updatePremierTeam(teamId) {
@@ -22,9 +22,9 @@ class PremierService {
     return axios.put(`${PREM_UPDATETEAM_URL}/${teamId}`);
   }
 
-  deletePremierTeam() {
+  deletePremierTeam(teamId) {
     //deleting the PL teams
-    return axios.post(PREM_DELETE_URL);
+    return axios.delete(`${PREM_DELETE_URL}/${teamId}`);
   }
 
   getOnlyPremierTeams() {

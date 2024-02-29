@@ -172,6 +172,7 @@ class ListAllMatchWeeks extends Component {
                 <th className="text-center">Home Score </th>
                 <th className="text-center">Away Team </th>
                 <th className="text-center">Away Score </th>
+                <th className="text-center"> Result </th>
                 <th className="text-center"> Options </th>
               </tr>
             </thead>
@@ -186,7 +187,7 @@ class ListAllMatchWeeks extends Component {
                         value={match.matchWeek}
                         className="w-30"
                         onChange={(event) =>
-                          this.updateMatchWeek(event, match.matchId)
+                          this.updateMatchRowItem(event, match.matchId)
                         }
                       />
                     ) : (
@@ -252,6 +253,17 @@ class ListAllMatchWeeks extends Component {
                     )}
                   </td>
                   <td className="text-center">
+                    {match.homeScore > match.awayScore ? (
+                      <button className="m5 btn btn-success" id={match.matchId}>
+                        W
+                      </button>
+                    ) : (
+                      <button className="m5 btn btn-danger" id={match.matchId}>
+                        L
+                      </button>
+                    )}
+                  </td>
+                  <td className="text-center">
                     <button
                       className="m5 btn btn-warning"
                       id={match.matchId}
@@ -264,7 +276,7 @@ class ListAllMatchWeeks extends Component {
                         : "Edit"}
                     </button>
                     <button
-                      className="btn btn-danger"
+                      className="btn btn-secondary"
                       id={match.matchId}
                       onClick={this.deleteMatchWeek}
                     >
