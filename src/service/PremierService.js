@@ -1,57 +1,39 @@
 import axios from "axios";
 
 const PREM_BASE_URL = "http://localhost:8080/api/teams";
-const PREM_ADDTEAM_URL = "http://localhost:8080/api/addteams";
+const PREM_ADDTEAM_URL = "http://localhost:8080/api/addTeam";
 const PREM_DELETE_URL = "http://localhost:8080/api/deleteTeam";
-const PREM_MATCHWEEK_URL = "http://localhost:8080/api/addMatchWeek";
 const PREM_LEAGUETEAMS_URL = "http://localhost:8080/api/premierTeams";
-const PREM_MATCHWEEKINFO_URL = "http://localhost:8080/api/allMatchWeek";
-const PREM_MATCHWEEKBYID_URL = "http://localhost:8080/api/MatchWeek";
 const PREM_TEAMBYID_URL = "http://localhost:8080/api/premTeam";
 const PREM_UPDATETEAM_URL = "http://localhost:8080/api/updateTeam";
-const PREM_UPDATEMATCHWEEK_URL = "http://localhost:8080/api/updateMatchWeek";
-const PREM_TEAMBYNAME_URL = "http://localhost:8080/api/teamResults";
 
 class PremierService {
   getPremierTeams() {
     return axios.get(PREM_BASE_URL);
   }
 
-  addPremierTeam() {
-    return axios.post(PREM_ADDTEAM_URL);
+  addPremierTeam(teamData) {
+    //adding the prem team
+    return axios.post(PREM_ADDTEAM_URL, teamData);
   }
 
   updatePremierTeam(teamId) {
+    //Updating the PL team details
     return axios.put(`${PREM_UPDATETEAM_URL}/${teamId}`);
   }
 
-  addMatchWeek() {
-    return axios.post(PREM_MATCHWEEK_URL);
-  }
-  deletePremierTeam() {
-    return axios.post(PREM_DELETE_URL);
+  deletePremierTeam(teamId) {
+    //deleting the PL teams
+    return axios.delete(`${PREM_DELETE_URL}/${teamId}`);
   }
 
   getOnlyPremierTeams() {
+    //Only Names of PL
     return axios.get(PREM_LEAGUETEAMS_URL);
   }
 
-  getAllMatchWeekInfo() {
-    return axios.get(PREM_MATCHWEEKINFO_URL);
-  }
-
-  getMatchWeekById() {
-    return axios.get(PREM_MATCHWEEKBYID_URL);
-  }
-  updateMatchWeekById(matchId) {
-    return axios.put(`${PREM_UPDATEMATCHWEEK_URL}/${matchId}`);
-  }
-
-  getTeamMatchWeekDetailsByName(teamName) {
-    return axios.get(`${PREM_TEAMBYNAME_URL}/${teamName}`);
-  }
-
   getOnlyPremTeamById(id) {
+    //getting only the premteam with Id for editing scenario
     return axios.get(`${PREM_TEAMBYID_URL}/${id}`);
   }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import PremierService from "../service/PremierService";
 
 class AddPremierTeam extends Component {
   constructor(props) {
@@ -19,21 +20,12 @@ class AddPremierTeam extends Component {
       teamCoach: this.state.teamCoach,
       teamStadium: this.state.teamStadium,
     };
-    fetch("http://localhost:8080/api/addTeam", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json", // Adjust the Content-Type as needed
-      },
-      body: JSON.stringify(data), // Include the request body as needed
-    })
-      .then((response) => {
-        console.log("we are in success score");
-        //window.location.reload
-      })
-      .catch((error) => {
-        console.log(error);
-        // Handle any errors
-      });
+
+    PremierService.addPremierTeam(data)
+      .then((response) => console.log("success scenario"))
+      .catch((response) =>
+        console.log("Adding team table failed ", response.data)
+      );
   }
   updateFormData(event) {
     this.setState({
@@ -45,12 +37,17 @@ class AddPremierTeam extends Component {
     return (
       <div>
         <h1>Add Premier League Team</h1>
-        <form name="premadd" onSubmit={this.premTeamSubmit}>
+        <form
+          className="d-flex align-items-center"
+          name="premadd"
+          onSubmit={this.premTeamSubmit}
+        >
           <div>
             <label>
-              Enter Club Name
+              Club Name
               <input
                 name="teamName"
+                className="mside-5"
                 onChange={this.updateFormData}
                 value={this.state.teamName}
                 type="text"
@@ -59,9 +56,10 @@ class AddPremierTeam extends Component {
           </div>
           <div>
             <label>
-              Enter Club Coach
+              Club Coach
               <input
                 name="teamCoach"
+                className="mside-5"
                 value={this.state.teamCoach}
                 onChange={this.updateFormData}
                 type="text"
@@ -70,8 +68,9 @@ class AddPremierTeam extends Component {
           </div>
           <div>
             <label>
-              Enter Club Stadium
+              Club Stadium
               <input
+                className="mside-5"
                 name="teamStadium"
                 value={this.state.teamStadium}
                 onChange={this.updateFormData}
@@ -82,16 +81,16 @@ class AddPremierTeam extends Component {
           <Link to="/teams">
             <button
               type="button"
-              className="mside-5 btn btn-seondary"
+              className="mside-5 btn btn-success"
               onClick={this.premTeamSubmit}
             >
               Submit
             </button>
           </Link>
+          <Link to="/">
+            <button className="m5 btn btn-primary">Back to home Page </button>
+          </Link>
         </form>
-        <Link to="/">
-          <button className="m5">Back to home Page </button>
-        </Link>
       </div>
     );
   }

@@ -12,6 +12,7 @@ class MatchWeekTeam extends Component {
       awayScore: 0,
       matchWeek: 0,
       stringList: [],
+      dupstringList: [],
       showMessage: false,
     };
     this.updateMatchWeekData = this.updateMatchWeekData.bind(this);
@@ -78,9 +79,13 @@ class MatchWeekTeam extends Component {
       });
   }
   updateMatchWeekData(event) {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({
+      [event.target.name]: event.target.value,
+      dupstringList: this.state.stringList.filter(
+        (n) => n !== event.target.value
+      ),
+    });
   }
-
   render() {
     return (
       <div>
@@ -142,11 +147,13 @@ class MatchWeekTeam extends Component {
                 onChange={this.updateMatchWeekData}
               >
                 <option value="">Select Team</option>
-                {this.state.stringList.map((string, index) => (
-                  <option key={index} value={string}>
-                    {string}
-                  </option>
-                ))}
+                {this.state.stringList
+                  .filter((n) => n !== this.state.homeTeam)
+                  .map((string, index) => (
+                    <option key={index} value={string}>
+                      {string}
+                    </option>
+                  ))}
               </select>
             </label>
           </div>
