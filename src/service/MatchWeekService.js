@@ -25,8 +25,8 @@ class MatchWeekService {
   getTeamMatchWeekDetailsByName(teamName) {
     return axios.get(`${PREM_TEAMBYNAME_URL}/${teamName}`);
   }
-  addMatchWeek() {
-    return axios.post(PREM_MATCHWEEK_URL);
+  addMatchWeek(matchWeekData) {
+    return axios.post(PREM_MATCHWEEK_URL, matchWeekData);
   }
   getOnlyMatchIds() {
     return axios.get(PREM_MATCHWEEKIDS_URL);
