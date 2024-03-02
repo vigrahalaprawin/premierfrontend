@@ -257,6 +257,13 @@ class ListAllMatchWeeks extends Component {
                       <button className="m5 btn btn-success" id={match.matchId}>
                         W
                       </button>
+                    ) : match.homeScore === match.awayScore ? (
+                      <button
+                        className="m5 btn btn-secondary"
+                        id={match.matchId}
+                      >
+                        D
+                      </button>
                     ) : (
                       <button className="m5 btn btn-danger" id={match.matchId}>
                         L
