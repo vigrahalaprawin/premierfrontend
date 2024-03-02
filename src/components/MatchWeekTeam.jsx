@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import MatchWeekService from "../service/MatchWeekService";
 import PremierService from "../service/PremierService";
 
 class MatchWeekTeam extends Component {
@@ -12,7 +13,6 @@ class MatchWeekTeam extends Component {
       awayScore: 0,
       matchWeek: 0,
       stringList: [],
-      dupstringList: [],
       showMessage: false,
     };
     this.updateMatchWeekData = this.updateMatchWeekData.bind(this);
@@ -34,26 +34,12 @@ class MatchWeekTeam extends Component {
 
   deleteMatchWeekInfo(event) {
     const premId = event.target.id;
-    fetch(`http://localhost:8080/api/deleteTeam/${premId}`, {
-      //Sending the parameter in url
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json", // Adjust the Content-Type as needed
-      },
-    })
-      .then((response) => {
-        console.log("success");
-      })
-      .catch((error) => {
-        console.log(error);
-        // Handle any errors
-      });
-
-    window.location.reload();
+    MatchWeekService.deletingMatchWeekById(premId)
+      .then((response) => console.log("deleted the matchID"))
+      .catch((error) => console.log(error));
   }
 
   matchWeekTeamSubmit(event) {
-    // event.preventDefault();
     const data = {
       homeTeam: this.state.homeTeam,
       awayTeam: this.state.awayTeam,
@@ -61,35 +47,28 @@ class MatchWeekTeam extends Component {
       awayScore: this.state.awayScore,
       matchWeek: this.state.matchWeek,
     };
-    fetch("http://localhost:8080/api/addMatchWeek", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json", // Adjust the Content-Type as needed
-      },
-      body: JSON.stringify(data), // Include the request body as needed
-    })
-      .then((response) => {
+
+    MatchWeekService.addMatchWeek(data)
+      .then((response) =>
         this.setState({
           showMessage: true,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        // Handle any errors
-      });
+        })
+      )
+      .catch((error) =>
+        console.log("we are facing issue while updating matchweek info")
+      );
+    event.preventDefault();
   }
   updateMatchWeekData(event) {
     this.setState({
       [event.target.name]: event.target.value,
-      dupstringList: this.state.stringList.filter(
-        (n) => n !== event.target.value
-      ),
     });
+    event.preventDefault();
   }
   render() {
     return (
       <div>
-        <h1>Add Premier League Team</h1>
+        <h1>Add Match Week Results</h1>
         <form
           className="d-flex align-items-center"
           name="premadd"
