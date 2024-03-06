@@ -14,21 +14,33 @@ class MatchWeekTeam extends Component {
       matchWeek: 0,
       stringList: [],
       showMessage: false,
+      showMatchEntry: false,
     };
     this.updateMatchWeekData = this.updateMatchWeekData.bind(this);
     this.matchWeekTeamSubmit = this.matchWeekTeamSubmit.bind(this);
     this.hideMessage = this.hideMessage.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
   }
 
   componentDidMount() {
     PremierService.getOnlyPremierTeams().then((response) => {
-      this.setState({ stringList: response.data });
+      this.setState({
+        stringList: response.data,
+      });
     });
   }
 
   hideMessage(event) {
     this.setState({
       showMessage: false,
+      showMatchEntry: false,
+    });
+  }
+  handleButtonClick(value) {
+    console.log(value);
+    this.setState({
+      showMatchEntry: !this.state.showMatchEntry,
+      matchWeek: value,
     });
   }
 
@@ -57,102 +69,129 @@ class MatchWeekTeam extends Component {
       .catch((error) =>
         console.log("we are facing issue while updating matchweek info")
       );
-    event.preventDefault();
   }
   updateMatchWeekData(event) {
     this.setState({
       [event.target.name]: event.target.value,
     });
-    event.preventDefault();
   }
   render() {
+    const matchWeekButton = [];
+    for (let i = 1; i <= this.state.stringList.length * 2 - 2; i++) {
+      matchWeekButton.push(
+        <button
+          className="mside-5"
+          key={i}
+          onClick={() => this.handleButtonClick(i)}
+        >
+          MW{i}
+        </button>
+      );
+    }
     return (
       <div>
         <h1>Add Match Week Results</h1>
-        <form
-          className="d-flex align-items-center"
-          name="premadd"
-          onSubmit={this.matchWeekTeamSubmit}
-        >
-          <div>
-            <label>
-              Match Week
-              <input
-                name="matchWeek"
-                className="w-30  mside-5 rounded"
-                value={this.state.matchWeek}
-                onChange={this.updateMatchWeekData}
-                type="number"
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              Home Team
-              <select
-                name="homeTeam"
-                className="mside-5 colorblue rounded"
-                value={this.state.homeTeam}
-                onChange={this.updateMatchWeekData}
-              >
-                <option value="">Select Team</option>
-                {this.state.stringList.map((string, index) => (
-                  <option key={index} value={string}>
-                    {string}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <div>
-            <label>
-              Home Score
-              <input
-                type="number"
-                name="homeScore"
-                className="w-30  mside-5 rounded"
-                value={this.state.homeScore}
-                onChange={this.updateMatchWeekData}
-              />
-            </label>
-          </div>
-          <div>
-            <label className="mside-5">
-              Away Team
-              <select
-                name="awayTeam"
-                className="mside-5 colorblue rounded"
-                value={this.state.awayTeam}
-                onChange={this.updateMatchWeekData}
-              >
-                <option value="">Select Team</option>
-                {this.state.stringList
-                  .filter((n) => n !== this.state.homeTeam)
-                  .map((string, index) => (
+        <div className="d-flex">
+          Total Number of Teams
+          <p className="mside-5">{this.state.stringList.length}</p>
+          You will Have
+          <p className="mside-5">{this.state.stringList.length * 2 - 2}</p>{" "}
+          matchweeks
+          <p className="mside-5">
+            Each MatchWeek will have {this.state.stringList.length / 2} Match
+            Results{" "}
+          </p>{" "}
+        </div>
+        <div className="d-flex justify-content-start">{matchWeekButton}</div>
+        {this.state.showMatchEntry && (
+          <form
+            className="d-flex align-items-center"
+            name="premadd"
+            onSubmit={this.matchWeekTeamSubmit}
+          >
+            <div>
+              <label>
+                Match Week
+                <input
+                  name="matchWeek"
+                  className="w-30  mside-5 rounded"
+                  value={this.state.matchWeek}
+                  onChange={this.updateMatchWeekData}
+                  type="number"
+                  readOnly
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Home Team
+                <select
+                  name="homeTeam"
+                  className="mside-5 colorblue rounded"
+                  value={this.state.homeTeam}
+                  onChange={this.updateMatchWeekData}
+                >
+                  <option value="">Select Team</option>
+                  {this.state.stringList.map((string, index) => (
                     <option key={index} value={string}>
                       {string}
                     </option>
                   ))}
-              </select>
-            </label>
-          </div>
-          <div>
-            <label className="mside-5">
-              Away Score
-              <input
-                name="awayScore"
-                className="w-30  mside-5 rounded"
-                value={this.state.awayScore}
-                onChange={this.updateMatchWeekData}
-                type="number"
-              />
-            </label>
-          </div>
-        </form>
+                </select>
+              </label>
+            </div>
+            <div>
+              <label>
+                Home Score
+                <input
+                  type="number"
+                  name="homeScore"
+                  className="w-30  mside-5 rounded"
+                  value={this.state.homeScore}
+                  onChange={this.updateMatchWeekData}
+                />
+              </label>
+            </div>
+            <div>
+              <label className="mside-5">
+                Away Team
+                <select
+                  name="awayTeam"
+                  className="mside-5 colorblue rounded"
+                  value={this.state.awayTeam}
+                  onChange={this.updateMatchWeekData}
+                >
+                  <option value="">Select Team</option>
+                  {this.state.stringList
+                    .filter((n) => n !== this.state.homeTeam)
+                    .map((string, index) => (
+                      <option key={index} value={string}>
+                        {string}
+                      </option>
+                    ))}
+                </select>
+              </label>
+            </div>
+            <div>
+              <label className="mside-5">
+                Away Score
+                <input
+                  name="awayScore"
+                  className="w-30  mside-5 rounded"
+                  value={this.state.awayScore}
+                  onChange={this.updateMatchWeekData}
+                  type="number"
+                />
+              </label>
+            </div>
+          </form>
+        )}
         <div>
           {this.state.showMessage && (
             <div onClick={this.hideMessage} className="text-success">
-              Match Week Details Updated for `{this.state.matchWeek}`
+              Match Week Details Updated for `{this.state.matchWeek}{" "}
+              {this.state.awayScore} {this.state.awayTeam}{" "}
+              {this.state.homeScore} {this.state.homeTeam}`
             </div>
           )}
         </div>

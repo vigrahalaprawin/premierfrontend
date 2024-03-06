@@ -3,7 +3,8 @@ import axios from "axios";
 const PREM_BASE_URL = "http://localhost:8080/api/teams";
 const PREM_ADDTEAM_URL = "http://localhost:8080/api/addTeam";
 const PREM_DELETE_URL = "http://localhost:8080/api/deleteTeam";
-const PREM_LEAGUETEAMS_URL = "http://localhost:8080/api/premierTeams";
+const PREM_LEAGUETEAM_URL = "http://localhost:8080/api/premierTeams";
+const PREM_LEAGUETEAMS_URL = "http://localhost:8080/api/premierTeamsWithId";
 const PREM_TEAMBYID_URL = "http://localhost:8080/api/premTeam";
 const PREM_UPDATETEAM_URL = "http://localhost:8080/api/updateTeam";
 
@@ -29,9 +30,13 @@ class PremierService {
 
   getOnlyPremierTeams() {
     //Only Names of PL
-    return axios.get(PREM_LEAGUETEAMS_URL);
+    return axios.get(PREM_LEAGUETEAM_URL);
   }
 
+  getOnlyPremierTeamsWithId() {
+    //Only Names of PL
+    return axios.get(PREM_LEAGUETEAMS_URL);
+  }
   getOnlyPremTeamById(id) {
     //getting only the premteam with Id for editing scenario
     return axios.get(`${PREM_TEAMBYID_URL}/${id}`);
