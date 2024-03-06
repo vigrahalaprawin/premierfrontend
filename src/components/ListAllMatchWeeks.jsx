@@ -13,6 +13,7 @@ class ListAllMatchWeeks extends Component {
       matchWeekIdList: [],
       selectedMatchWeek: 0,
       selectedTeam: "None",
+      comparingTeamName: null,
     };
     this.deleteMatchWeek = this.deleteMatchWeek.bind(this);
     this.editedMatchWeekInfo = this.editedMatchWeekInfo.bind(this);
@@ -25,9 +26,10 @@ class ListAllMatchWeeks extends Component {
     MatchWeekService.getAllMatchWeekInfo().then((response) => {
       this.setState({ matchWeeksInfo: response.data });
     });
-    PremierService.getOnlyPremierTeams().then((response) => {
+    PremierService.getOnlyPremierTeamsWithId().then((response) => {
       this.setState({ stringList: response.data });
     });
+
     MatchWeekService.getOnlyMatchIds().then((response) => {
       this.setState({ matchWeekIdList: response.data });
     });
@@ -38,6 +40,7 @@ class ListAllMatchWeeks extends Component {
     this.setState({
       selectedTeam: event.target.value,
       selectedMatchWeek: 0,
+      comparingTeamName: teamName,
     });
     if (teamName === "") {
       MatchWeekService.getAllMatchWeekInfo().then((response) => {
@@ -46,7 +49,9 @@ class ListAllMatchWeeks extends Component {
     } else if (teamName !== "") {
       MatchWeekService.getTeamMatchWeekDetailsByName(teamName).then(
         (response) => {
-          this.setState({ matchWeeksInfo: response.data });
+          this.setState({
+            matchWeeksInfo: response.data,
+          });
         }
       );
     }
@@ -134,8 +139,8 @@ class ListAllMatchWeeks extends Component {
                     None
                   </option>
                   {this.state.stringList.map((string, index) => (
-                    <option key={index} value={string}>
-                      {string}
+                    <option key={index} value={string.teamName}>
+                      {string.teamName}
                     </option>
                   ))}
                 </select>
@@ -167,6 +172,7 @@ class ListAllMatchWeeks extends Component {
           <table className="table  table-striped table-bordered">
             <thead>
               <tr>
+                <th className="text-center">Number</th>
                 <th className="text-center">Match Week</th>
                 <th className="text-center">Home Team</th>
                 <th className="text-center">Home Score </th>
@@ -177,8 +183,10 @@ class ListAllMatchWeeks extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.matchWeeksInfo.map((match) => (
+              {this.state.matchWeeksInfo.map((match, index) => (
                 <tr key={match.matchId} id={match.matchId}>
+                  <td className="text-center">{index + 1}</td>
+
                   <td className="text-center m5">
                     {this.state.editableRow === match.matchId ? (
                       <input
@@ -253,7 +261,30 @@ class ListAllMatchWeeks extends Component {
                     )}
                   </td>
                   <td className="text-center">
-                    {match.homeScore > match.awayScore ? (
+                    {this.state.comparingTeamName === match.awayTeam ? ( //While displaying individual teamNames results should be according to selected Team
+                      match.homeScore < match.awayScore ? (
+                        <button
+                          className="m5 btn btn-success"
+                          id={match.matchId}
+                        >
+                          W
+                        </button>
+                      ) : match.homeScore === match.awayScore ? (
+                        <button
+                          className="m5 btn btn-secondary"
+                          id={match.matchId}
+                        >
+                          D
+                        </button>
+                      ) : (
+                        <button
+                          className="m5 btn btn-danger"
+                          id={match.matchId}
+                        >
+                          L
+                        </button>
+                      )
+                    ) : match.homeScore > match.awayScore ? ( //this condition holds good for all team Results
                       <button className="m5 btn btn-success" id={match.matchId}>
                         W
                       </button>
