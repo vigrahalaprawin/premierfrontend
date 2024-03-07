@@ -11,35 +11,50 @@ class MatchWeekTeam extends Component {
       awayTeam: "",
       homeScore: 0,
       awayScore: 0,
-      matchWeek: 0,
+      matchWeek: null,
       stringList: [],
+      displayOption: [],
+      selectedTeamList: [],
       showMessage: false,
-      showMatchEntry: false,
     };
     this.updateMatchWeekData = this.updateMatchWeekData.bind(this);
     this.matchWeekTeamSubmit = this.matchWeekTeamSubmit.bind(this);
     this.hideMessage = this.hideMessage.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
+    this.displayingTeamNames = this.displayingTeamNames.bind(this);
   }
 
   componentDidMount() {
     PremierService.getOnlyPremierTeams().then((response) => {
       this.setState({
         stringList: response.data,
+        displayOption: response.data,
       });
+    });
+  }
+  displayingTeamNames(value) {
+    MatchWeekService.getTeamsforMatchWeek(value).then((response) => {
+      console.log("teams slected and response.data", response.data);
+      this.setState(
+        {
+          selectedTeamList: response.data,
+        },
+        () => {}
+      );
     });
   }
 
   hideMessage(event) {
     this.setState({
       showMessage: false,
-      showMatchEntry: false,
     });
   }
+
   handleButtonClick(value) {
-    console.log(value);
+    this.displayingTeamNames(value);
     this.setState({
-      showMatchEntry: !this.state.showMatchEntry,
+      homeTeam: "",
+      awayTeam: "",
       matchWeek: value,
     });
   }
@@ -59,6 +74,12 @@ class MatchWeekTeam extends Component {
       awayScore: this.state.awayScore,
       matchWeek: this.state.matchWeek,
     };
+    PremierService.getOnlyPremierTeams().then((response) => {
+      this.setState({
+        stringList: response.data,
+        displayOption: response.data,
+      });
+    });
 
     MatchWeekService.addMatchWeek(data)
       .then((response) =>
@@ -75,7 +96,8 @@ class MatchWeekTeam extends Component {
       [event.target.name]: event.target.value,
     });
   }
-  render() {
+
+  matchWeekButton() {
     const matchWeekButton = [];
     for (let i = 1; i <= this.state.stringList.length * 2 - 2; i++) {
       matchWeekButton.push(
@@ -88,6 +110,10 @@ class MatchWeekTeam extends Component {
         </button>
       );
     }
+    return matchWeekButton;
+  }
+
+  render() {
     return (
       <div>
         <h1>Add Match Week Results</h1>
@@ -102,8 +128,11 @@ class MatchWeekTeam extends Component {
             Results{" "}
           </p>{" "}
         </div>
-        <div className="d-flex justify-content-start">{matchWeekButton}</div>
-        {this.state.showMatchEntry && (
+        <div className="d-flex justify-content-start">
+          {this.matchWeekButton()}
+        </div>
+
+        {this.state.matchWeek && (
           <form
             className="d-flex align-items-center"
             name="premadd"
@@ -132,11 +161,14 @@ class MatchWeekTeam extends Component {
                   onChange={this.updateMatchWeekData}
                 >
                   <option value="">Select Team</option>
-                  {this.state.stringList.map((string, index) => (
-                    <option key={index} value={string}>
-                      {string}
-                    </option>
-                  ))}
+                  {this.state.displayOption.map(
+                    (string, index) =>
+                      !this.state.selectedTeamList.includes(string) && (
+                        <option key={index} value={string}>
+                          {string}
+                        </option>
+                      )
+                  )}
                 </select>
               </label>
             </div>
@@ -162,13 +194,16 @@ class MatchWeekTeam extends Component {
                   onChange={this.updateMatchWeekData}
                 >
                   <option value="">Select Team</option>
-                  {this.state.stringList
+                  {this.state.displayOption
                     .filter((n) => n !== this.state.homeTeam)
-                    .map((string, index) => (
-                      <option key={index} value={string}>
-                        {string}
-                      </option>
-                    ))}
+                    .map(
+                      (string, index) =>
+                        !this.state.selectedTeamList.includes(string) && (
+                          <option key={index} value={string}>
+                            {string}
+                          </option>
+                        )
+                    )}
                 </select>
               </label>
             </div>
