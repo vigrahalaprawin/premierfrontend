@@ -35,6 +35,10 @@ class MatchWeekService {
     return axios.put(`${BASE_URL}/matchWeek/${matchId}`, matchEdited);
   }
 
+  getTeamsforMatchWeek(matchId) {
+    return axios.get(`${PREM_MATCHWEEKBYID_URL}/teamNames/${matchId}`);
+  }
+
   deletingMatchWeekById(matchId) {
     return axios.delete(`${PREM_DELETE_MATCHWEEK_URL}/${matchId}`);
   }
