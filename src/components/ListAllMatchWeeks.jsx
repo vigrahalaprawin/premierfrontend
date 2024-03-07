@@ -26,7 +26,7 @@ class ListAllMatchWeeks extends Component {
     MatchWeekService.getAllMatchWeekInfo().then((response) => {
       this.setState({ matchWeeksInfo: response.data });
     });
-    PremierService.getOnlyPremierTeamsWithId().then((response) => {
+    PremierService.getOnlyPremierTeams().then((response) => {
       this.setState({ stringList: response.data });
     });
 
@@ -121,6 +121,27 @@ class ListAllMatchWeeks extends Component {
         console.log("error deleting the record");
       });
   }
+  getMatchButtonClass(match) {
+    let buttonClassObj = { name: "btn-danger", text: "L" };
+    if (
+      this.state.comparingTeamName === match.awayTeam &&
+      this.state.selectedMatchWeek === 0
+    ) {
+      if (match.homeScore < match.awayScore) {
+        buttonClassObj = { name: "btn-success", text: "W" };
+      } else if (match.homeScore === match.awayScore) {
+        buttonClassObj = { name: "btn-seondary", text: "D" };
+      }
+    } else {
+      if (match.homeScore > match.awayScore) {
+        buttonClassObj = { name: "btn-success", text: "W" };
+      } else if (match.homeScore === match.awayScore) {
+        buttonClassObj = { name: "btn-seondary", text: "D" };
+      }
+    }
+
+    return buttonClassObj;
+  }
 
   render() {
     return (
@@ -139,8 +160,8 @@ class ListAllMatchWeeks extends Component {
                     None
                   </option>
                   {this.state.stringList.map((string, index) => (
-                    <option key={index} value={string.teamName}>
-                      {string.teamName}
+                    <option key={index} value={string}>
+                      {string}
                     </option>
                   ))}
                 </select>
@@ -261,45 +282,16 @@ class ListAllMatchWeeks extends Component {
                     )}
                   </td>
                   <td className="text-center">
-                    {this.state.comparingTeamName === match.awayTeam ? ( //While displaying individual teamNames results should be according to selected Team
-                      match.homeScore < match.awayScore ? (
-                        <button
-                          className="m5 btn btn-success"
-                          id={match.matchId}
-                        >
-                          W
-                        </button>
-                      ) : match.homeScore === match.awayScore ? (
-                        <button
-                          className="m5 btn btn-secondary"
-                          id={match.matchId}
-                        >
-                          D
-                        </button>
-                      ) : (
-                        <button
-                          className="m5 btn btn-danger"
-                          id={match.matchId}
-                        >
-                          L
-                        </button>
-                      )
-                    ) : match.homeScore > match.awayScore ? ( //this condition holds good for all team Results
-                      <button className="m5 btn btn-success" id={match.matchId}>
-                        W
-                      </button>
-                    ) : match.homeScore === match.awayScore ? (
+                    {
                       <button
-                        className="m5 btn btn-secondary"
+                        className={`m5 btn  ${
+                          this.getMatchButtonClass(match).name
+                        }`}
                         id={match.matchId}
                       >
-                        D
+                        {this.getMatchButtonClass(match).text}
                       </button>
-                    ) : (
-                      <button className="m5 btn btn-danger" id={match.matchId}>
-                        L
-                      </button>
-                    )}
+                    }
                   </td>
                   <td className="text-center">
                     <button
