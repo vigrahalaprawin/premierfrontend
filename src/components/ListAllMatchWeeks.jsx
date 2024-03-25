@@ -8,13 +8,16 @@ class ListAllMatchWeeks extends Component {
     super(props);
     this.state = {
       matchWeeksInfo: [],
+      matchWeeksInfo2: [],
       editableRow: null,
       stringList: [],
       matchWeekIdList: [],
+      testingOption: [],
       selectedMatchWeek: 0,
       selectedTeam: "None",
       showHomeorAway: false,
       comparingTeamName: null,
+      homeorAway: null,
     };
     this.deleteMatchWeek = this.deleteMatchWeek.bind(this);
     this.editedMatchWeekInfo = this.editedMatchWeekInfo.bind(this);
@@ -25,7 +28,10 @@ class ListAllMatchWeeks extends Component {
   }
   componentDidMount() {
     MatchWeekService.getAllMatchWeekInfo().then((response) => {
-      this.setState({ matchWeeksInfo: response.data });
+      this.setState({
+        matchWeeksInfo: response.data,
+        matchWeeksInfo2: response.data,
+      });
     });
     PremierService.getOnlyPremierTeams().then((response) => {
       this.setState({ stringList: response.data });
@@ -87,9 +93,9 @@ class ListAllMatchWeeks extends Component {
 
     MatchWeekService.updatingMatchWeekData(matchId, matchEdited)
       .then((response) => {
-        console.log("we are in success score");
+        console.log("we are in success score", response);
       })
-      .catch((error) => console.log("error while updating"));
+      .catch((error) => console.log("error while updating", error));
   }
   editedMatchWeekInfo(event, matchId) {
     if (event.target.textContent !== "Save") {
@@ -148,6 +154,20 @@ class ListAllMatchWeeks extends Component {
     return buttonClassObj;
   }
 
+  matchesDisplay(event, teamName) {
+    let displayOption;
+    MatchWeekService.getAllMatchWeekInfo().then((response) => {
+      this.setState({ matchWeeksInfo2: response.data });
+    });
+    let checkTeam = event.target.id === "home" ? "homeTeam" : "awayTeam";
+    displayOption = this.state.matchWeeksInfo2.filter(
+      (obj) => obj[checkTeam] === teamName
+    );
+    this.setState({
+      matchWeeksInfo: displayOption,
+    });
+  }
+
   render() {
     return (
       <div>
@@ -164,7 +184,7 @@ class ListAllMatchWeeks extends Component {
           </div>
           <div className="d-flex justify-content-start">
             <div className="m5">
-              <label>
+              <label className="m5">
                 Select Team
                 <select
                   name="selectedTeam"
@@ -182,12 +202,12 @@ class ListAllMatchWeeks extends Component {
                 </select>
               </label>
             </div>
-            <div>
+            <div className="m5">
               <p className="font-weight-bold m5"> OR </p>
             </div>
 
             <div>
-              <label>
+              <label className="m5">
                 Select By MatchWeek
                 <select
                   name="matchWeekId"
@@ -205,8 +225,24 @@ class ListAllMatchWeeks extends Component {
               </label>
               {this.state.showHomeorAway && (
                 <label>
-                  <button className="btn btn-outline-primary">HOME</button>
-                  <button className="btn btn-outline-primary">AWAY</button>
+                  <button
+                    id="home"
+                    className="btn btn-outline-primary"
+                    onClick={(event) =>
+                      this.matchesDisplay(event, this.state.selectedTeam)
+                    }
+                  >
+                    HOME
+                  </button>
+                  <button
+                    id="away"
+                    className="btn btn-outline-primary"
+                    onClick={(event) =>
+                      this.matchesDisplay(event, this.state.selectedTeam)
+                    }
+                  >
+                    AWAY
+                  </button>
                 </label>
               )}
             </div>
@@ -311,13 +347,13 @@ class ListAllMatchWeeks extends Component {
                           }`}
                           id={match.matchId}
                         >
-                          {this.getMatchButtonClass(match).homeorAway}
+                          {this.getMatchButtonClass(match).text}
                         </button>
                         <button
                           className={`m5 btn  btn btn-outline-info`}
                           id={match.matchId}
                         >
-                          {this.getMatchButtonClass(match).text}
+                          {this.getMatchButtonClass(match).homeorAway}
                         </button>
                       </div>
                     }
