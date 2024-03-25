@@ -64,7 +64,9 @@ class ListPremierTeams extends Component {
             <tbody>
               {this.state.premTeams.map((premTeam) => (
                 <tr key={premTeam.id}>
-                  <td>{premTeam.teamName}</td>
+                  <td>
+                    <a href="https://www.google.com">{premTeam.teamName}</a>
+                  </td>
                   <td>{premTeam.teamCoach}</td>
                   <td>{premTeam.teamStadium}</td>
                   <td>
