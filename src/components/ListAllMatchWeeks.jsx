@@ -8,12 +8,16 @@ class ListAllMatchWeeks extends Component {
     super(props);
     this.state = {
       matchWeeksInfo: [],
+      matchWeeksInfo2: [],
       editableRow: null,
       stringList: [],
       matchWeekIdList: [],
+      testingOption: [],
       selectedMatchWeek: 0,
       selectedTeam: "None",
+      showHomeorAway: false,
       comparingTeamName: null,
+      homeorAway: null,
     };
     this.deleteMatchWeek = this.deleteMatchWeek.bind(this);
     this.editedMatchWeekInfo = this.editedMatchWeekInfo.bind(this);
@@ -24,9 +28,12 @@ class ListAllMatchWeeks extends Component {
   }
   componentDidMount() {
     MatchWeekService.getAllMatchWeekInfo().then((response) => {
-      this.setState({ matchWeeksInfo: response.data });
+      this.setState({
+        matchWeeksInfo: response.data,
+        matchWeeksInfo2: response.data,
+      });
     });
-    PremierService.getOnlyPremierTeamsWithId().then((response) => {
+    PremierService.getOnlyPremierTeams().then((response) => {
       this.setState({ stringList: response.data });
     });
 
@@ -41,6 +48,7 @@ class ListAllMatchWeeks extends Component {
       selectedTeam: event.target.value,
       selectedMatchWeek: 0,
       comparingTeamName: teamName,
+      showHomeorAway: true,
     });
     if (teamName === "") {
       MatchWeekService.getAllMatchWeekInfo().then((response) => {
@@ -85,9 +93,9 @@ class ListAllMatchWeeks extends Component {
 
     MatchWeekService.updatingMatchWeekData(matchId, matchEdited)
       .then((response) => {
-        console.log("we are in success score");
+        console.log("we are in success score", response);
       })
-      .catch((error) => console.log("error while updating"));
+      .catch((error) => console.log("error while updating", error));
   }
   editedMatchWeekInfo(event, matchId) {
     if (event.target.textContent !== "Save") {
@@ -112,23 +120,71 @@ class ListAllMatchWeeks extends Component {
 
   deleteMatchWeek(event) {
     const matchId = event.target.id;
-    console.log(matchId);
     MatchWeekService.deletingMatchWeekById(matchId)
       .then((response) => {
-        this.setState({ matchWeeksInfo: response.data });
+        this.setState({ matchWeeksInfo: response.data, selectedMatchWeek: 0 });
       })
       .catch((error) => {
         console.log("error deleting the record");
       });
+  }
+  getMatchButtonClass(match) {
+    let buttonClassObj = { name: "", text: "", homeorAway: "" };
+    if (
+      this.state.comparingTeamName === match.awayTeam &&
+      this.state.selectedMatchWeek === 0
+    ) {
+      if (match.homeScore < match.awayScore) {
+        buttonClassObj = { name: "btn-success", text: "W", homeorAway: "A" };
+      } else if (match.homeScore === match.awayScore) {
+        buttonClassObj = { name: "btn-secondary", text: "D", homeorAway: "A" };
+      } else {
+        buttonClassObj = { name: "btn-danger", text: "L", homeorAway: "A" };
+      }
+    } else {
+      if (match.homeScore > match.awayScore) {
+        buttonClassObj = { name: "btn-success", text: "W", homeorAway: "H" };
+      } else if (match.homeScore === match.awayScore) {
+        buttonClassObj = { name: "btn-secondary", text: "D", homeorAway: "H" };
+      } else {
+        buttonClassObj = { name: "btn-danger", text: "L", homeorAway: "H" };
+      }
+    }
+
+    return buttonClassObj;
+  }
+
+  matchesDisplay(event, teamName) {
+    let displayOption;
+    MatchWeekService.getAllMatchWeekInfo().then((response) => {
+      this.setState({ matchWeeksInfo2: response.data });
+    });
+    let checkTeam = event.target.id === "home" ? "homeTeam" : "awayTeam";
+    displayOption = this.state.matchWeeksInfo2.filter(
+      (obj) => obj[checkTeam] === teamName
+    );
+    this.setState({
+      matchWeeksInfo: displayOption,
+    });
   }
 
   render() {
     return (
       <div>
         <div className="row m-5">
+          <div>
+            <Link to="/matchWeek">
+              <button className="btn btn-primary m5 addTeambasic">
+                Add MatchWeek Results
+              </button>
+            </Link>
+            <Link to="/">
+              <button className="m5 btn-primary btn"> Home Page </button>
+            </Link>
+          </div>
           <div className="d-flex justify-content-start">
             <div className="m5">
-              <label>
+              <label className="m5">
                 Select Team
                 <select
                   name="selectedTeam"
@@ -139,19 +195,19 @@ class ListAllMatchWeeks extends Component {
                     None
                   </option>
                   {this.state.stringList.map((string, index) => (
-                    <option key={index} value={string.teamName}>
-                      {string.teamName}
+                    <option key={index} value={string}>
+                      {string}
                     </option>
                   ))}
                 </select>
               </label>
             </div>
-            <div>
+            <div className="m5">
               <p className="font-weight-bold m5"> OR </p>
             </div>
 
             <div>
-              <label>
+              <label className="m5">
                 Select By MatchWeek
                 <select
                   name="matchWeekId"
@@ -167,6 +223,28 @@ class ListAllMatchWeeks extends Component {
                   ))}
                 </select>
               </label>
+              {this.state.showHomeorAway && (
+                <label>
+                  <button
+                    id="home"
+                    className="btn btn-outline-primary"
+                    onClick={(event) =>
+                      this.matchesDisplay(event, this.state.selectedTeam)
+                    }
+                  >
+                    HOME
+                  </button>
+                  <button
+                    id="away"
+                    className="btn btn-outline-primary"
+                    onClick={(event) =>
+                      this.matchesDisplay(event, this.state.selectedTeam)
+                    }
+                  >
+                    AWAY
+                  </button>
+                </label>
+              )}
             </div>
           </div>
           <table className="table  table-striped table-bordered">
@@ -261,45 +339,24 @@ class ListAllMatchWeeks extends Component {
                     )}
                   </td>
                   <td className="text-center">
-                    {this.state.comparingTeamName === match.awayTeam ? ( //While displaying individual teamNames results should be according to selected Team
-                      match.homeScore < match.awayScore ? (
+                    {
+                      <div>
                         <button
-                          className="m5 btn btn-success"
+                          className={`m5 btn  ${
+                            this.getMatchButtonClass(match).name
+                          }`}
                           id={match.matchId}
                         >
-                          W
+                          {this.getMatchButtonClass(match).text}
                         </button>
-                      ) : match.homeScore === match.awayScore ? (
                         <button
-                          className="m5 btn btn-secondary"
+                          className={`m5 btn  btn btn-outline-info`}
                           id={match.matchId}
                         >
-                          D
+                          {this.getMatchButtonClass(match).homeorAway}
                         </button>
-                      ) : (
-                        <button
-                          className="m5 btn btn-danger"
-                          id={match.matchId}
-                        >
-                          L
-                        </button>
-                      )
-                    ) : match.homeScore > match.awayScore ? ( //this condition holds good for all team Results
-                      <button className="m5 btn btn-success" id={match.matchId}>
-                        W
-                      </button>
-                    ) : match.homeScore === match.awayScore ? (
-                      <button
-                        className="m5 btn btn-secondary"
-                        id={match.matchId}
-                      >
-                        D
-                      </button>
-                    ) : (
-                      <button className="m5 btn btn-danger" id={match.matchId}>
-                        L
-                      </button>
-                    )}
+                      </div>
+                    }
                   </td>
                   <td className="text-center">
                     <button
@@ -325,16 +382,6 @@ class ListAllMatchWeeks extends Component {
               ))}
             </tbody>
           </table>
-        </div>
-        <div>
-          <Link to="/matchWeek">
-            <button className="btn btn-primary m5 addTeambasic">
-              Add MatchWeek Results
-            </button>
-          </Link>
-          <Link to="/">
-            <button className="m5 btn-primary btn"> Home Page </button>
-          </Link>
         </div>
       </div>
     );
