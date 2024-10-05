@@ -5,7 +5,6 @@ import ListPremierTeams from "./ListPremierTeams";
 class DeletePremTeam extends Component {
   constructor(props) {
     super(props);
-    console.log(" we are in edit compoennt");
     this.state = {
       teamId: [],
     };

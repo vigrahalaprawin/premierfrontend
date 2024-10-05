@@ -227,7 +227,7 @@ class ListAllMatchWeeks extends Component {
                 <label>
                   <button
                     id="home"
-                    className="btn btn-outline-primary"
+                    className="btn m5 btn-outline-primary"
                     onClick={(event) =>
                       this.matchesDisplay(event, this.state.selectedTeam)
                     }
@@ -236,7 +236,7 @@ class ListAllMatchWeeks extends Component {
                   </button>
                   <button
                     id="away"
-                    className="btn btn-outline-primary"
+                    className="btn m5 btn-outline-primary"
                     onClick={(event) =>
                       this.matchesDisplay(event, this.state.selectedTeam)
                     }

@@ -55,6 +55,7 @@ class MatchWeekTeam extends Component {
       matchWeek: value,
       homeScore: 0,
       awayScore: 0,
+      showMessage: false,
     });
   }
   matchWeekTeamSubmit(event) {
@@ -78,12 +79,9 @@ class MatchWeekTeam extends Component {
     if (this.state.homeTeam !== "" && this.state.awayTeam !== "") {
       MatchWeekService.addMatchWeek(data)
         .then((response) =>
-          this.setState(
-            {
-              showMessage: true,
-            },
-            console.log("updated matchweek", response)
-          )
+          this.setState({
+            showMessage: true,
+          })
         )
         .catch((error) =>
           console.log("we are facing issue while updating matchweek info")
@@ -252,9 +250,7 @@ class MatchWeekTeam extends Component {
           Submit
         </button>
         <Link to="/">
-          <button className="mside-5 btn btn-primary">
-            Back to home Page{" "}
-          </button>
+          <button className="mside-5 btn btn-primary">Home Page</button>
         </Link>
         <Link to="/allMatchWeeks">
           <button className="btn btn-primary m5 addTeambasic">
