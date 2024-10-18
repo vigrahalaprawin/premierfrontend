@@ -15,6 +15,7 @@ class MatchWeekTeam extends Component {
       stringList: [],
       displayOption: [],
       selectedTeamList: [],
+      newSelectedTeamList: [],
       showMessage: false,
     };
     this.updateMatchWeekData = this.updateMatchWeekData.bind(this);
@@ -22,6 +23,8 @@ class MatchWeekTeam extends Component {
     this.hideMessage = this.hideMessage.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
     this.displayingTeamNames = this.displayingTeamNames.bind(this);
+    this.displayingSelectedHomeTeamNames =
+      this.displayingSelectedHomeTeamNames.bind(this);
     // this.hidingEntyColumn = this.hidingEntyColumn.bind(this);
   }
 
@@ -39,6 +42,21 @@ class MatchWeekTeam extends Component {
         selectedTeamList: response.data,
       });
     });
+  }
+
+  displayingSelectedHomeTeamNames(value) {
+    MatchWeekService.getAwayTeamsforMatchWeek(value)
+      .then((response) => {
+        this.setState(
+          {
+            newSelectedTeamList: response.data,
+          },
+          () => {}
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching away teams:", error);
+      });
   }
 
   hideMessage(event) {
@@ -106,6 +124,7 @@ class MatchWeekTeam extends Component {
 
   updateMatchWeekData(event) {
     event.preventDefault();
+    this.displayingSelectedHomeTeamNames(event.target.value);
     this.setState({
       [event.target.name]: event.target.value,
     });
@@ -208,6 +227,7 @@ class MatchWeekTeam extends Component {
                       .filter((n) => n !== this.state.homeTeam)
                       .map(
                         (string, index) =>
+                          !this.state.newSelectedTeamList.includes(string) &&
                           !this.state.selectedTeamList.includes(string) && (
                             <option key={index} value={string}>
                               {string}
@@ -241,7 +261,6 @@ class MatchWeekTeam extends Component {
             </div>
           )}
         </div>
-
         <button
           type="button"
           className="mside-5 btn btn-secondary"
