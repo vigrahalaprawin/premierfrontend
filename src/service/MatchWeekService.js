@@ -38,6 +38,9 @@ class MatchWeekService {
   getTeamsforMatchWeek(matchId) {
     return axios.get(`${PREM_MATCHWEEKBYID_URL}/teamNames/${matchId}`);
   }
+  getAwayTeamsforMatchWeek(teamName) {
+    return axios.get(`${PREM_TEAMBYNAME_URL}/AwayTeams/${teamName}`);
+  }
 
   deletingMatchWeekById(matchId) {
     return axios.delete(`${PREM_DELETE_MATCHWEEK_URL}/${matchId}`);
